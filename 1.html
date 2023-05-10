@@ -401,7 +401,6 @@ class Progress {
         let ele = this.$pointer;
         let father = this.$el;
         let flag = true; //鼠标是否点击
-        let flag = true; //鼠标是否点击
         let value = this.value; // 保存当前的 value 值
         ele.mousedown((e) => {
             flag = true;
@@ -435,13 +434,37 @@ class Progress {
     }
 
     bindEvents() { //鼠标点击时更改
-        this.$el.click((e) => {
-            let _x = e.offsetX; //鼠标距离元素左边的距离
-            let _ratio = _x / this.width;
-            let _value = _ratio * (this.max - this.min); //当前的音量值
-            this.changeDOMStyle(_x);
-            this.handler(_value); //更改进度之后，执行回调
-        })
+        this.$progressBar.click((e) => {
+  const mousePos = e.offsetX;
+  const progressBarWidth = this.$progressBar.width();
+  const ratio = mousePos / progressBarWidth;
+  const duration = this.audio.duration;
+  const currentTime = duration * ratio;
+  this.audio.currentTime = currentTime;
+  this.progress.setValue(currentTime / duration);
+});
+
+this.$progressBar.mousedown(() => {
+  // 监听鼠标按下事件
+  this.progress.pause();
+});
+
+this.$progressBar.mouseup(() => {
+  // 监听鼠标松开事件
+  this.progress.start();
+});
+
+this.$progressBar.mousemove((e) => {
+  // 监听鼠标移动事件
+  if (this.progress.paused) return;
+  const mousePos = e.offsetX;
+  const progressBarWidth = this.$progressBar.width();
+  const ratio = mousePos / progressBarWidth;
+  const duration = this.audio.duration;
+  const currentTime = duration * ratio;
+  this.audio.currentTime = currentTime;
+  this.progress.setValue(currentTime / duration);
+});
     }
     //更改pointer和back
     changeDOMStyle(distance) {
