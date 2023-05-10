@@ -1,4 +1,4 @@
-  <!-- 唱片 -->
+           <!-- 唱片 -->
             <div class="music-player__disc">
                 <!-- 唱片图片 -->
                 <div class="music-player__image">
@@ -85,25 +85,6 @@ class Player {
         Player.instance = instance;
         return instance;
     }
-
-    init() {
-    this.renderBackAndPointer();
-    this.progress = new Progress(this.$el.find('.back'), this.$el.find('.pointer'));
-    this.bindEvents();
-    this.drag();
-    this.value;
-    this.changeDOMStyle(this.width * this.value);
-
-    this.$progressBar.click((e) => {
-        const mousePos = e.offsetX;
-        const progressBarWidth = this.$progressBar.width();
-        const ratio = mousePos / progressBarWidth;
-        const duration = this.audio.duration;
-        const currentTime = duration * ratio;
-        this.audio.currentTime = currentTime;
-        this.progress.setValue(currentTime / duration);
-    });
-}
 }
 
 //歌曲信息
@@ -236,6 +217,7 @@ class PlayerCreator {
 
         //歌曲进度 this.audio.duration
 
+
         //可以播放的时候触发（歌曲的基本信息都已经获取到了）
         this.audio.oncanplay = () => {
             //避免重复实例化
@@ -252,11 +234,6 @@ class PlayerCreator {
                     this.audio.currentTime = value;
                 }
             })
-            const progressBar = document.querySelector('.player__song--progress');
-progressBar.addEventListener('input', () => {
-  const value = progressBar.value;
-  this.audio.currentTime = value;
-});
             //调整总时长
             this.render_time.total.html(this.util.formatTime(this.audio.duration));
         }
@@ -337,9 +314,9 @@ progressBar.addEventListener('input', () => {
     }
     //歌曲时长
     songTime() {
-        let currentMinute = parseInt(this.audio.currentTime / 60) < 10 ? "0" + parseInt(this.audio.currentTime / 60) : parseInt(this.audio.currentTime / 60);
-let currentSecond = parseInt(this.audio.currentTime % 60) < 10 ? "0" + parseInt(this.audio.currentTime % 60) : parseInt(this.audio.currentTime % 60);
-$('.nowTime').text(currentMinute + ':' + currentSecond);
+        let totalMinute = parseInt(this.audio.duration / 60) < 10 ? "0" + parseInt(this.audio.duration / 60) : parseInt(this.audio.duration / 60);
+        let totalSecond = parseInt(this.audio.duration % 60) < 10 ? "0" + parseInt(this.audio.duration % 60) : parseInt(this.audio.duration % 60);
+        $('.totalTime').text(totalMinute + ':' + totalSecond);
     }
     //切换歌曲
     changeSong(type) {
@@ -401,7 +378,6 @@ class Progress {
         let ele = this.$pointer;
         let father = this.$el;
         let flag = true; //鼠标是否点击
-        let value = this.value; // 保存当前的 value 值
         ele.mousedown((e) => {
             flag = true;
             let mousePos = {
@@ -420,51 +396,18 @@ class Progress {
         })
         $(document).mouseup(() => {
             flag = false;
-            this.handler(value); 
         })
-
-        this.$el.on('click', (e) => {
-        let _x = e.offsetX; //鼠标距离元素左边的距离
-        let _ratio = _x / this.width;
-        let _value = _ratio * (this.max - this.min); //当前的音量值
-        this.setValue(_value); // 设置当前进度条的值
-        this.handler(_value); //更改进度之后，执行回调
-    });
 
     }
 
     bindEvents() { //鼠标点击时更改
-        this.$progressBar.click((e) => {
-  const mousePos = e.offsetX;
-  const progressBarWidth = this.$progressBar.width();
-  const ratio = mousePos / progressBarWidth;
-  const duration = this.audio.duration;
-  const currentTime = duration * ratio;
-  this.audio.currentTime = currentTime;
-  this.progress.setValue(currentTime / duration);
-});
-
-this.$progressBar.mousedown(() => {
-  // 监听鼠标按下事件
-  this.progress.pause();
-});
-
-this.$progressBar.mouseup(() => {
-  // 监听鼠标松开事件
-  this.progress.start();
-});
-
-this.$progressBar.mousemove((e) => {
-  // 监听鼠标移动事件
-  if (this.progress.paused) return;
-  const mousePos = e.offsetX;
-  const progressBarWidth = this.$progressBar.width();
-  const ratio = mousePos / progressBarWidth;
-  const duration = this.audio.duration;
-  const currentTime = duration * ratio;
-  this.audio.currentTime = currentTime;
-  this.progress.setValue(currentTime / duration);
-});
+        this.$el.click((e) => {
+            let _x = e.offsetX; //鼠标距离元素左边的距离
+            let _ratio = _x / this.width;
+            let _value = _ratio * (this.max - this.min); //当前的音量值
+            this.changeDOMStyle(_x);
+            this.handler(_value); //更改进度之后，执行回调
+        })
     }
     //更改pointer和back
     changeDOMStyle(distance) {
