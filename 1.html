@@ -48,7 +48,7 @@
             </div>
         </div>
         <!-- 歌曲列表 -->
-        <div align="center" style="color:#fff;margin-top:8px;font-size:13px;text-align:LEFT;">
+        <div align="center" style="color:#fff;margin-top:-50px;font-size:13px;text-align:LEFT;">
         <?php
             $value = $con->query($sql);
             foreach ($value as $k) {
@@ -95,7 +95,7 @@ class Musics {
             $value = $con->query($sql);
             foreach ($value as $k) { 
                 $i++;
-                echo "{id: ".$i.",title:'".$k['title']."',singer: '太华音乐',songUrl: './playerstart.php?id=".$k['id']."',imageUrl: './images/".$k['pic']."'},";             
+                echo "{id: ".$i.",title:'".$k['title']."',singer: '太华音乐',songUrl: 'http://reg.taewah.com/music/playerstart.php?id=".$k['id']."',imageUrl: '../images/".$k['pic']."'},";             
             }
         ?>]}
     //根据索引获取歌曲的方法
@@ -216,7 +216,6 @@ class PlayerCreator {
 
 
         //歌曲进度 this.audio.duration
-
 
         //可以播放的时候触发（歌曲的基本信息都已经获取到了）
         this.audio.oncanplay = () => {
@@ -377,7 +376,7 @@ class Progress {
     drag() {
         let ele = this.$pointer;
         let father = this.$el;
-        let flag = true; //鼠标是否点击
+        let flag = false; //鼠标是否点击
         ele.mousedown((e) => {
             flag = true;
             let mousePos = {
